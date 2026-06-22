@@ -1,0 +1,10 @@
+dist/
+downloads/
+forensics/
+test-output/
+*.pfx
+*.snk
+*.user
+*.log
+*.tmp
+*.download
