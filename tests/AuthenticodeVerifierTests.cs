@@ -5,21 +5,20 @@ namespace NextDeskBootstrapper
 {
     internal static class AuthenticodeVerifierTests
     {
-        private const string ExpectedPublisherSubject =
-            "CN=Bayside Computer Systems Inc, O=Bayside Computer Systems Inc, S=Texas, C=US";
-
         private static int Main(string[] args)
         {
-            if (args.Length != 1)
+            if (args.Length != 2)
             {
-                Console.Error.WriteLine("Usage: AuthenticodeVerifierTests.exe <signed-nextdesk-exe>");
+                Console.Error.WriteLine(
+                    "Usage: AuthenticodeVerifierTests.exe <signed-exe> <expected-publisher-subject>");
                 return 2;
             }
 
             string signedFile = Path.GetFullPath(args[0]);
+            string expectedPublisherSubject = args[1];
             AuthenticodeVerifier.VerifyTrustedPublisher(
                 signedFile,
-                ExpectedPublisherSubject);
+                expectedPublisherSubject);
 
             ExpectFailure(
                 delegate
@@ -44,7 +43,7 @@ namespace NextDeskBootstrapper
                     {
                         AuthenticodeVerifier.VerifyTrustedPublisher(
                             tamperedFile,
-                            ExpectedPublisherSubject);
+                            expectedPublisherSubject);
                     },
                     "invalid Authenticode signature");
             }

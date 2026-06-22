@@ -1,5 +1,6 @@
 param(
-    [string] $SignedInstaller
+    [string] $SignedInstaller,
+    [string] $ExpectedPublisherSubject = 'CN=Bayside Computer Systems Inc, O=Bayside Computer Systems Inc, S=Texas, C=US'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,7 +52,7 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-& $OutFile $SignedInstaller
+& $OutFile $SignedInstaller $ExpectedPublisherSubject
 if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }

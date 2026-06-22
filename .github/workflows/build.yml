@@ -14,19 +14,22 @@ jobs:
 
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build bootstrapper
         shell: powershell
         run: .\scripts\build.ps1
 
-      - name: Download signed NextDesk test fixture
-        shell: powershell
-        run: .\scripts\download-upstream.ps1
-
       - name: Test Authenticode verification
         shell: powershell
-        run: .\scripts\test.ps1
+        run: |
+          $fixture = Join-Path $env:WINDIR 'explorer.exe'
+          $certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2(
+            [System.Security.Cryptography.X509Certificates.X509Certificate]::CreateFromSignedFile($fixture)
+          )
+          .\scripts\test.ps1 `
+            -SignedInstaller $fixture `
+            -ExpectedPublisherSubject $certificate.Subject
 
       - name: Upload unsigned build artifact
         uses: actions/upload-artifact@v4
