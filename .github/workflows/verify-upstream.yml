@@ -1,0 +1,34 @@
+name: Verify published installers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/verify-upstream.yml
+      - scripts/download-upstream.ps1
+      - scripts/test.ps1
+      - src/NextDeskBootstrapper/AuthenticodeVerifier.cs
+      - tests/AuthenticodeVerifierTests.cs
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Download published NextDesk installers
+        shell: powershell
+        run: .\scripts\download-upstream.ps1
+
+      - name: Test published Authenticode signature
+        shell: powershell
+        run: .\scripts\test.ps1
